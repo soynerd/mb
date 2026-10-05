@@ -1,19 +1,46 @@
-import react, { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+
 export default function MedicineDetails() {
   const { id } = useParams();
-  const [openfda, setOpenfds] = useState();
-  const [medicine, setMedicine] = useState();
-  useEffect(() => {
-    const medi = JSON.parse(localStorage.getItem("medicines"));
 
-    medi.map((med) => {
-      if (med.id == id) {
-        setOpenfds(med.openfda);
-        setMedicine(med);
+  const [medicine, setMedicine] = useState(null);
+  const [openfda, setOpenfda] = useState(null);
+
+  useEffect(() => {
+    const storedMedicines = localStorage.getItem("medicines");
+
+    if (!storedMedicines) {
+      return;
+    }
+
+    try {
+      const medicines = JSON.parse(storedMedicines);
+
+      const selectedMedicine = medicines.find(
+        (med) => String(med.id) === String(id),
+      );
+
+      if (selectedMedicine) {
+        setMedicine(selectedMedicine);
+        setOpenfda(selectedMedicine.openfda);
       }
-    });
-  });
+    } catch (error) {
+      console.error("Error reading medicines from localStorage:", error);
+    }
+  }, [id]);
+
+  if (!medicine) {
+    return (
+      <main className="container">
+        <article className="detail-card">
+          <h1>Medicine not found</h1>
+          <p>The medicine could not be found in your saved search results.</p>
+        </article>
+      </main>
+    );
+  }
+
   return (
     <main className="container">
       <article className="detail-card">

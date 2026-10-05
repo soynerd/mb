@@ -11,7 +11,9 @@ function Home() {
   const apiCalling = async () => {
     if (!search.trim()) return;
 
-    const url = `https://api.fda.gov/drug/label.json?search=openfda.brand_name:"${search}"`;
+    const url =
+      `https://api.fda.gov/drug/label.json?search=openfda.brand_name:"${search}"` +
+      "&limit=20";
 
     try {
       const data = await fetch(url);
